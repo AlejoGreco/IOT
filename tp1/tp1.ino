@@ -11,6 +11,13 @@
 #define WIFINAME "Telecentro-a298"  // Your SSID
 #define WIFIPASS "NWZLZWNZCTZ5"  // Your Wifi Pass
 
+// Topics define
+#define DEVICE_LABEL "lowpower001"
+#define TOP_TEMP "temperature"
+#define TOP_HUM "humidity"
+#define TOP_SLEEP "sleepTime"
+#define TOP_LIGHT "light"
+
 // Pins
 #define ON_BOARD_LED 2
 
@@ -61,14 +68,17 @@ void setup() {
   client.setDebug(true);  // Pass a true or false bool value to activate debug messages
   client.wifiConnection(WIFINAME, WIFIPASS);
   client.begin(callback);
-  client.ubidotsSubscribe("hibernate001", "light");  // Insert the dataSource and Variable's Labels
+  client.ubidotsSubscribe(DEVICE_LABEL, TOP_LIGHT);  // Insert the dataSource and Variable's Labels
+  client.ubidotsSubscribe(DEVICE_LABEL, TOP_SLEEP);  // Insert the dataSource and Variable's Labels
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   if (!client.connected()) {
     client.reconnect();
-    client.ubidotsSubscribe("hibernate001", "light");  // Insert the dataSource and Variable's Labels
+    client.ubidotsSubscribe(DEVICE_LABEL, TOP_LIGHT);  // Insert the dataSource and Variable's Labels
+    client.ubidotsSubscribe(DEVICE_LABEL, TOP_SLEEP);  // Insert the dataSource and Variable's Labels
+
   }
 
   client.loop();
@@ -78,9 +88,9 @@ void loop() {
     float temperature = dht.readTemperature();
     float humedity = dht.readHumidity();
 
-    client.add("humedity", humedity);
-    client.add("temperature", temperature);
-    client.ubidotsPublish("hibernate001");
+    client.add(TOP_HUM, humedity);
+    client.add(TOP_TEMP, temperature);
+    client.ubidotsPublish(DEVICE_LABEL);
 
     Serial.print("Temperatura: ");
     Serial.println(temperature);
